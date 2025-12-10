@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            background: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ボタンテスト</h1>
+    <button id="test-btn">このボタンをクリック</button>
+    <div id="output">ここに結果が表示されます</div>
+
+    <script>
+        console.log('Test script loaded');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+
+            const btn = document.getElementById('test-btn');
+            const output = document.getElementById('output');
+
+            console.log('Button found:', !!btn);
+
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    console.log('Button clicked!');
+                    output.textContent = 'ボタンが正常に動作しています！ ✓';
+                    output.style.background = '#90EE90';
+                });
+            } else {
+                output.textContent = 'エラー: ボタンが見つかりません';
+                output.style.background = '#FFB6C1';
+            }
+        });
+    </script>
+</body>
+
+</html>

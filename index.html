@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARキャット - WebXR版</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Three.js for 3D rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+    <!-- WebXR Polyfill for better compatibility -->
+    <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header class="site-header">
+            <div class="container flex items-center justify-between">
+                <div class="logo">Aha!デモ</div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container text-center">
+                    <h1>ARキャット キャンペーン</h1>
+                    <p>カメラを使って猫を捕まえよう!<br>10秒間でできるだけ多くの猫をタップしてね。</p>
+                    <button id="start-ar-btn" class="btn btn-primary" style="margin-top: 20px;">
+                        ARゲームをプレイする
+                    </button>
+                    <p id="status" style="margin-top: 10px; color: #666;"></p>
+                </div>
+            </section>
+
+            <!-- Campaign Overview -->
+            <section class="campaign-overview">
+                <div class="container">
+                    <div class="section-header text-center">
+                        <h2>🎉 ARで猫を捕まえて豪華賞品をゲット!</h2>
+                        <p>最新のAR技術を使った楽しいキャンペーンに参加しよう。<br>スマートフォンのカメラで現実世界に現れる猫をタップして、スコアを競おう!</p>
+                    </div>
+                    <div class="overview-cards">
+                        <div class="overview-card">
+                            <div class="card-icon">📱</div>
+                            <h3>簡単参加</h3>
+                            <p>スマホのカメラだけで誰でも参加できます</p>
+                        </div>
+                        <div class="overview-card">
+                            <div class="card-icon">⏱️</div>
+                            <h3>10秒勝負</h3>
+                            <p>短時間で楽しめるスピーディーなゲーム</p>
+                        </div>
+                        <div class="overview-card">
+                            <div class="card-icon">🎁</div>
+                            <h3>豪華賞品</h3>
+                            <p>スコアに応じて素敵なプレゼント</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How to Play -->
+            <section class="how-to-play">
+                <div class="container">
+                    <div class="section-header text-center">
+                        <h2>参加方法</h2>
+                        <p>簡単3ステップで今すぐ参加!</p>
+                    </div>
+                    <div class="steps-container">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <div class="step-icon">🎮</div>
+                            <h3>ゲームを開始</h3>
+                            <p>「ARゲームをプレイする」ボタンをタップして、カメラへのアクセスを許可してください。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <div class="step-icon">🐱</div>
+                            <h3>猫を捕まえる</h3>
+                            <p>画面に現れる猫をタップ!10秒間でできるだけ多くの猫を捕まえましょう。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <div class="step-icon">🏆</div>
+                            <h3>スコアを確認</h3>
+                            <p>ゲーム終了後、あなたのスコアが表示されます。何度でも挑戦できます!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prizes -->
+            <section class="prizes-section">
+                <div class="container">
+                    <div class="section-header text-center">
+                        <h2>賞品・特典</h2>
+                        <p>スコアに応じて素敵なプレゼントをご用意!</p>
+                    </div>
+                    <div class="prizes-grid">
+                        <div class="prize-card gold">
+                            <div class="prize-badge">🥇 Gold</div>
+                            <div class="prize-image">
+                                <img src="cat_transparent.png" alt="Gold Prize"
+                                    style="width: 100px; height: 100px; object-fit: contain;">
+                            </div>
+                            <h3>20匹以上</h3>
+                            <p class="prize-name">オリジナルARキャットぬいぐるみ</p>
+                            <p class="prize-desc">+ 特製ステッカーセット</p>
+                        </div>
+                        <div class="prize-card silver">
+                            <div class="prize-badge">🥈 Silver</div>
+                            <div class="prize-image">
+                                <img src="cat_transparent.png" alt="Silver Prize"
+                                    style="width: 80px; height: 80px; object-fit: contain;">
+                            </div>
+                            <h3>15〜19匹</h3>
+                            <p class="prize-name">オリジナルトートバッグ</p>
+                            <p class="prize-desc">+ デジタル壁紙</p>
+                        </div>
+                        <div class="prize-card bronze">
+                            <div class="prize-badge">🥉 Bronze</div>
+                            <div class="prize-image">
+                                <img src="cat_transparent.png" alt="Bronze Prize"
+                                    style="width: 60px; height: 60px; object-fit: contain;">
+                            </div>
+                            <h3>10〜14匹</h3>
+                            <p class="prize-name">オリジナルステッカー</p>
+                            <p class="prize-desc">+ 参加証明書</p>
+                        </div>
+                        <div class="prize-card participation">
+                            <div class="prize-badge">🎖️ 参加賞</div>
+                            <div class="prize-image">
+                                <img src="cat_transparent.png" alt="Participation Prize"
+                                    style="width: 50px; height: 50px; object-fit: contain;">
+                            </div>
+                            <h3>全員</h3>
+                            <p class="prize-name">デジタル参加証</p>
+                            <p class="prize-desc">+ 次回キャンペーン優待</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Campaign Period -->
+            <section class="campaign-period">
+                <div class="container">
+                    <div class="period-card">
+                        <h2>📅 キャンペーン期間</h2>
+                        <div class="period-dates">
+                            <div class="date-item">
+                                <span class="date-label">開始</span>
+                                <span class="date-value">2025年12月10日(火)</span>
+                            </div>
+                            <div class="date-separator">〜</div>
+                            <div class="date-item">
+                                <span class="date-label">終了</span>
+                                <span class="date-value">2026年1月31日(金)</span>
+                            </div>
+                        </div>
+                        <p class="period-note">※賞品の発送は2026年2月中旬を予定しています</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="faq-section">
+                <div class="container">
+                    <div class="section-header text-center">
+                        <h2>よくある質問</h2>
+                    </div>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Q. 参加費用はかかりますか?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>A. いいえ、完全無料でご参加いただけます。通信費のみお客様のご負担となります。</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Q. 何回でも挑戦できますか?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>A. はい、期間中は何度でもプレイ可能です。最高スコアが記録されます。</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Q. どのスマートフォンでも遊べますか?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>A. カメラ機能を搭載したスマートフォンであれば、ほとんどの機種で遊べます。iOS 12以降、Android 8以降を推奨しています。</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Q. 賞品はどのように受け取れますか?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>A. キャンペーン終了後、対象者の方にメールでご連絡いたします。配送先情報をご登録いただき、後日郵送にてお届けします。</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Q. カメラの使用が心配です...</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>A. カメラ映像はゲームプレイにのみ使用され、保存や送信は一切行いません。安心してお楽しみください。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Social Share -->
+            <section class="social-share">
+                <div class="container text-center">
+                    <h2>キャンペーンをシェアしよう!</h2>
+                    <p>#ARキャット #猫キャンペーン</p>
+                    <div class="share-buttons">
+                        <button class="share-btn twitter-btn">
+                            <span class="share-icon">𝕏</span>
+                            <span>Xでシェア</span>
+                        </button>
+                        <button class="share-btn line-btn">
+                            <span class="share-icon">📱</span>
+                            <span>LINEでシェア</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Terms -->
+            <section class="terms-section">
+                <div class="container">
+                    <div class="section-header text-center">
+                        <h2>注意事項・利用規約</h2>
+                    </div>
+                    <div class="terms-content">
+                        <ul>
+                            <li>本キャンペーンは日本国内にお住まいの方が対象です。</li>
+                            <li>賞品の発送は日本国内のみとさせていただきます。</li>
+                            <li>お一人様何回でもご参加いただけますが、賞品の獲得は期間中お一人様1回までとさせていただきます。</li>
+                            <li>カメラ機能を使用するため、カメラへのアクセス許可が必要です。</li>
+                            <li>通信環境によっては正常に動作しない場合があります。</li>
+                            <li>賞品の内容は予告なく変更される場合があります。</li>
+                            <li>当選の権利は第三者への譲渡はできません。</li>
+                            <li>本キャンペーンは予告なく中止・変更される場合があります。</li>
+                        </ul>
+                        <p class="terms-note">詳しい利用規約は<a href="#" class="terms-link">こちら</a>をご覧ください。</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>ARキャット キャンペーン</h3>
+                        <p>最新のAR技術で楽しむ、新感覚の猫捕獲ゲーム</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>お問い合わせ</h4>
+                        <p>Email: info@arcat-campaign.jp<br>
+                            受付時間: 平日 10:00-18:00</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>リンク</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">プライバシーポリシー</a></li>
+                            <li><a href="#">利用規約</a></li>
+                            <li><a href="#">特定商取引法に基づく表記</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 ARキャット キャンペーン実行委員会. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <section id="game-screen" class="game-screen hidden">
+        <div class="game-container">
+            <!-- AR Overlay for WebXR DOM overlay -->
+            <div id="ar-overlay" class="ar-overlay hidden">
+                <div id="pre-game-ui" class="pre-game-ui">
+                    <h2>準備完了!</h2>
+                    <p class="ar-instructions">デバイスを動かして周囲をスキャンしてください</p>
+                    <button id="start-game-btn" class="btn btn-primary">Start Game</button>
+                </div>
+
+                <div id="game-hud" class="game-hud hidden">
+                    <div class="hud-item timer">残り時間: <span id="timer-display">10</span>秒</div>
+                    <div class="hud-item score">捕まえた猫: <span id="score-display">0</span>匹</div>
+                </div>
+
+                <div id="ar-instructions" class="ar-instructions-overlay">
+                    <p>👆 猫をタップして捕まえよう!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="result-screen" class="result-screen hidden">
+        <div class="container text-center">
+            <h2>ゲーム終了!</h2>
+            <div class="result-card">
+                <div class="result-icon">
+                    <img src="cat_transparent.png" alt="Cat" style="width: 120px; height: 120px; object-fit: contain;">
+                </div>
+                <div class="result-label">捕まえた猫</div>
+                <div id="final-score" class="final-score">0</div>
+                <div class="result-message">匹</div>
+            </div>
+            <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+            <button id="back-to-top-btn" class="btn btn-secondary" style="margin-top: 10px;">トップに戻る</button>
+        </div>
+    </section>
+
+    <!-- WebXR AR Module -->
+    <script src="js/webxr-ar.js"></script>
+
+    <script>
+        console.log('WebXR AR script loaded');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('DOM loaded');
+
+            // Initialize WebXR AR
+            const arApp = new WebXRAR();
+
+            // Elements
+            const app = document.getElementById('app');
+            const gameScreen = document.getElementById('game-screen');
+            const resultScreen = document.getElementById('result-screen');
+            const startArBtn = document.getElementById('start-ar-btn');
+            const startGameBtn = document.getElementById('start-game-btn');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            const backToTopBtn = document.getElementById('back-to-top-btn');
+            const statusText = document.getElementById('status');
+
+            // Check AR support
+            const arSupported = await arApp.isARSupported();
+
+            if (!arSupported) {
+                console.warn('WebXR AR not supported');
+                if (statusText) {
+                    statusText.textContent = '⚠️ このデバイスはWebXR ARに対応していません';
+                    statusText.style.color = '#ff6b6b';
+                }
+                // Could implement fallback to camera overlay here
+            }
+
+            // Start AR Session
+            if (startArBtn) {
+                startArBtn.addEventListener('click', async () => {
+                    console.log('Start AR button clicked');
+
+                    if (!arSupported) {
+                        alert('このデバイスはWebXR ARに対応していません。\n\nAR対応デバイス:\n- Android (Chrome 79+, ARCore対応)\n- iOS (Safari 15.4+)');
+                        return;
+                    }
+
+                    statusText.textContent = 'ARセッションを開始中...';
+
+                    try {
+                        await arApp.startARSession();
+                        console.log('AR session started successfully');
+                    } catch (error) {
+                        console.error('Failed to start AR:', error);
+                        statusText.textContent = 'エラー: ' + error.message;
+                        alert('ARセッションの開始に失敗しました。\n\nカメラへのアクセスを許可してください。');
+                    }
+                });
+            }
+
+            // Start Game
+            if (startGameBtn) {
+                startGameBtn.addEventListener('click', () => {
+                    console.log('Start game clicked');
+                    arApp.startGame();
+
+                    // Show instructions
+                    const instructions = document.getElementById('ar-instructions');
+                    if (instructions) {
+                        instructions.style.display = 'block';
+                    }
+                });
+            }
+
+            // Handle taps on AR canvas
+            document.addEventListener('click', (event) => {
+                if (arApp.gameState.isPlaying && arApp.renderer) {
+                    arApp.onTap(event);
+                }
+            });
+
+            // Play Again
+            if (playAgainBtn) {
+                playAgainBtn.addEventListener('click', async () => {
+                    resultScreen.classList.add('hidden');
+
+                    // Restart AR session
+                    try {
+                        await arApp.startARSession();
+                    } catch (error) {
+                        console.error('Failed to restart AR:', error);
+                        app.classList.remove('hidden');
+                    }
+                });
+            }
+
+            // Back to Top
+            if (backToTopBtn) {
+                backToTopBtn.addEventListener('click', () => {
+                    // End AR session if active
+                    if (arApp.session) {
+                        arApp.session.end();
+                    }
+
+                    resultScreen.classList.add('hidden');
+                    gameScreen.classList.add('hidden');
+                    app.classList.remove('hidden');
+                });
+            }
+
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all FAQ items
+                    faqItems.forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                    });
+
+                    // Open clicked item if it wasn't active
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+
+            // Social Share Buttons
+            const twitterBtn = document.querySelector('.twitter-btn');
+            const lineBtn = document.querySelector('.line-btn');
+
+            if (twitterBtn) {
+                twitterBtn.addEventListener('click', () => {
+                    const text = 'ARキャット キャンペーンに参加しよう! #ARキャット #猫キャンペーン';
+                    const url = window.location.href;
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                });
+            }
+
+            if (lineBtn) {
+                lineBtn.addEventListener('click', () => {
+                    const url = window.location.href;
+                    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`, '_blank');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

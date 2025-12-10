@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARキャット - シンプル版</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="app">
+        <header class="site-header">
+            <div class="container flex items-center justify-between">
+                <div class="logo">Aha!デモ</div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container text-center">
+                    <h1>ARキャット キャンペーン</h1>
+                    <p>カメラを使って猫を捕まえよう!<br>10秒間でできるだけ多くの猫をタップしてね。</p>
+                    <button id="start-ar-btn" class="btn btn-primary" style="margin-top: 20px;">
+                        ARゲームをプレイする
+                    </button>
+                    <p id="status" style="margin-top: 10px; color: #666;"></p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <section id="game-screen" class="game-screen hidden">
+        <div class="game-container">
+            <div class="camera-view-container">
+                <video id="camera-feed" autoplay playsinline muted></video>
+                <div id="ar-cat" class="ar-cat-character hidden">
+                    <div class="cat-name-tag">ミケ 🐱</div>
+                    <div style="font-size: 100px;">🐱</div>
+                </div>
+            </div>
+
+            <div id="pre-game-ui" class="pre-game-ui">
+                <h2>準備完了!</h2>
+                <button id="start-game-btn" class="btn btn-primary">Start Game</button>
+            </div>
+
+            <div id="game-hud" class="game-hud hidden">
+                <div class="hud-item timer">残り時間: <span id="timer-display">10</span>秒</div>
+                <div class="hud-item score">捕まえた猫: <span id="score-display">0</span>匹</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="result-screen" class="result-screen hidden">
+        <div class="container text-center">
+            <h2>ゲーム終了!</h2>
+            <div class="result-card">
+                <div class="result-icon">🐱</div>
+                <div class="result-label">捕まえた猫</div>
+                <div id="final-score" class="final-score">0</div>
+                <div class="result-message">匹</div>
+            </div>
+            <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+            <button id="back-to-top-btn" class="btn btn-secondary" style="margin-top: 10px;">トップに戻る</button>
+        </div>
+    </section>
+
+    <script>
+        console.log('Simple script loaded');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+
+            const app = document.getElementById('app');
+            const gameScreen = document.getElementById('game-screen');
+            const resultScreen = document.getElementById('result-screen');
+            const startArBtn = document.getElementById('start-ar-btn');
+            const startGameBtn = document.getElementById('start-game-btn');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            const backToTopBtn = document.getElementById('back-to-top-btn');
+            const cameraFeed = document.getElementById('camera-feed');
+            const preGameUi = document.getElementById('pre-game-ui');
+            const gameHud = document.getElementById('game-hud');
+            const arCat = document.getElementById('ar-cat');
+            const statusText = document.getElementById('status');
+
+            console.log('Elements:', {
+                app: !!app,
+                gameScreen: !!gameScreen,
+                startArBtn: !!startArBtn
+            });
+
+            let gameState = {
+                score: 0,
+                timeLeft: 10,
+                isPlaying: false,
+                timerInterval: null
+            };
+
+            if (startArBtn) {
+                startArBtn.addEventListener('click', async () => {
+                    console.log('Start button clicked');
+                    statusText.textContent = 'カメラを起動中...';
+
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' }
+                        });
+
+                        console.log('Camera obtained');
+                        cameraFeed.srcObject = stream;
+                        await cameraFeed.play();
+
+                        app.classList.add('hidden');
+                        gameScreen.classList.remove('hidden');
+                        console.log('Game screen shown');
+                    } catch (err) {
+                        console.error('Camera error:', err);
+                        statusText.textContent = 'エラー: ' + err.message;
+                        alert('カメラへのアクセスが必要です');
+                    }
+                });
+            }
+
+            if (startGameBtn) {
+                startGameBtn.addEventListener('click', () => {
+                    console.log('Start game clicked');
+                    gameState.score = 0;
+                    gameState.timeLeft = 10;
+                    gameState.isPlaying = true;
+
+                    document.getElementById('score-display').textContent = '0';
+                    document.getElementById('timer-display').textContent = '10';
+                    preGameUi.classList.add('hidden');
+                    gameHud.classList.remove('hidden');
+                    arCat.classList.remove('hidden');
+
+                    gameState.timerInterval = setInterval(() => {
+                        gameState.timeLeft--;
+                        document.getElementById('timer-display').textContent = gameState.timeLeft;
+
+                        if (gameState.timeLeft <= 0) {
+                            endGame();
+                        }
+                    }, 1000);
+
+                    arCat.addEventListener('click', () => {
+                        if (gameState.isPlaying) {
+                            gameState.score++;
+                            document.getElementById('score-display').textContent = gameState.score;
+                        }
+                    });
+                });
+            }
+
+            function endGame() {
+                gameState.isPlaying = false;
+                clearInterval(gameState.timerInterval);
+                arCat.classList.add('hidden');
+                document.getElementById('final-score').textContent = gameState.score;
+                gameScreen.classList.add('hidden');
+                resultScreen.classList.remove('hidden');
+            }
+
+            if (playAgainBtn) {
+                playAgainBtn.addEventListener('click', () => {
+                    resultScreen.classList.add('hidden');
+                    gameScreen.classList.remove('hidden');
+                    preGameUi.classList.remove('hidden');
+                    gameHud.classList.add('hidden');
+                });
+            }
+
+            if (backToTopBtn) {
+                backToTopBtn.addEventListener('click', () => {
+                    if (cameraFeed.srcObject) {
+                        cameraFeed.srcObject.getTracks().forEach(track => track.stop());
+                    }
+                    resultScreen.classList.add('hidden');
+                    gameScreen.classList.add('hidden');
+                    app.classList.remove('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
